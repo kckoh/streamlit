@@ -38,8 +38,9 @@ img_description=st.text_input( "prompt"  )
 num_of_images=st.number_input("select",min_value=1,max_value=5,value=1)
 
 if st.button("Generate Images"):
-    generate_image=generate_images( img_description,num_of_images)
-    st.image(generate_image)
+    for _ in range(num_of_images):
+        generate_image=generate_images( img_description,num_of_images)
+        st.image(generate_image)
 
 
 
