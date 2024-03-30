@@ -22,25 +22,53 @@ with st.sidebar:
     """
 
 
-def generate_images(image_description,num_images):
-    img_response=client.images.generate(
-            model="dall-e-3",
-            prompt=image_description,
-            size="1024x1024",
-            quality="standard",
-            n=1,
+# def generate_images(image_description,num_images):
+#     img_response=client.images.generate(
+#             model="dall-e-3",
+#             prompt=image_description,
+#             size="1024x1024",
+#             quality="standard",
+#             n=1,
               
-            )
-    image_url = img_response.data[0].url
-    return image_url
+#             )
+#     image_url = img_response.data[0].url
+#     return image_url
 
-img_description=st.text_input( "prompt"  )
-num_of_images=st.number_input("select",min_value=1,max_value=5,value=1)
+# img_description=st.text_input( "prompt"  )
+# # num_of_images=st.number_input("select",min_value=1,max_value=5,value=1)
 
-if st.button("Generate Images"):
-    for _ in range(num_of_images):
-        generate_image=generate_images( img_description,num_of_images)
-        st.image(generate_image)
+# if st.button("Generate Images"):
+#     # for _ in range(num_of_images):
+#     #     generate_image=generate_images( img_description,num_of_images)
+#     #     st.image(generate_image)
+#     completion = client.chat.completions.create(
+#     model="gpt-3.5-turbo",
+#     messages=[
+#         {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
+#         {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
+#     ]
+#     )
+#     print(completion.choices[0].message) # Object
+#     st.write(completion.choices[0].message.content)
+    
+
+if "messages" not in st.session_state:
+    st.session_state["messages"] = [{"role": "assistant", "content": "천재음악가로서 , 아름다운 가사를 만들어드리겠습니다."}]
+for msg in st.session_state.messages:
+    st.chat_message(msg["role"]).write(msg["content"])
+
+if prompt := st.chat_input():
+
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    st.chat_message("user").write(prompt)
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo", 
+        messages=st.session_state.messages
+    )
+    msg = response.choices[0].message.content
+    st.session_state.messages.append({"role": "assistant", "content": msg})
+    st.chat_message("assistant").write(msg)
+
 
 
 
